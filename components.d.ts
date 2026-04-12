@@ -12,6 +12,11 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     BottomNav: typeof import('./src/components/layout/BottomNav.vue')['default']
+    DateHeader: typeof import('./src/components/today/DateHeader.vue')['default']
+    ItemCard: typeof import('./src/components/today/ItemCard.vue')['default']
+    ItemList: typeof import('./src/components/today/ItemList.vue')['default']
+    QuickInput: typeof import('./src/components/today/QuickInput.vue')['default']
+    ReviewSection: typeof import('./src/components/today/ReviewSection.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }
