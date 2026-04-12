@@ -3,7 +3,7 @@
   <div class="settings-page">
     <div class="settings-group">
       <van-cell-group inset>
-        <van-cell title="导出数据" icon="down" is-link @click="handleExport" />
+        <van-cell title="导出数据" icon="down" is-link @click="showExportSheet = true" />
         <van-cell title="导入数据" icon="upgrade" is-link @click="showImport = true" />
         <van-cell title="清空数据" icon="delete-o" is-link @click="showClearConfirm = true" />
       </van-cell-group>
@@ -14,6 +14,15 @@
         <van-cell title="版本" :value="version" />
       </van-cell-group>
     </div>
+
+    <!-- 导出选项弹窗 -->
+    <van-action-sheet
+      v-model:show="showExportSheet"
+      :actions="exportActions"
+      cancel-text="取消"
+      close-on-click-action
+      @select="onExportSelect"
+    />
 
     <!-- 导入对话框 -->
     <van-popup v-model:show="showImport" position="bottom" round>
@@ -44,13 +53,15 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRecordStore } from '../stores/record'
-import { loadData, saveData } from '../utils/storage'
+import { loadData, saveData, getDayRecord } from '../utils/storage'
 import {
   exportToMarkdown,
+  dayRecordToMarkdown,
   downloadFile,
   readFile,
   parseMarkdownFile,
 } from '../utils/markdown'
+import { getToday } from '../utils/date'
 import { showSuccessToast, showFailToast } from 'vant'
 
 const store = useRecordStore()
@@ -58,13 +69,54 @@ const version = '1.0.0'
 
 const showImport = ref(false)
 const showClearConfirm = ref(false)
+const showExportSheet = ref(false)
 
-function handleExport() {
-  const data = loadData()
-  const markdown = exportToMarkdown(data)
-  const filename = `每日复盘_${new Date().toISOString().slice(0, 10)}.md`
+interface ExportAction {
+  name: string
+  value: string
+}
+
+const exportActions: ExportAction[] = [
+  { name: '导出今日', value: 'today' },
+  { name: '导出全部', value: 'all' },
+]
+
+function onExportSelect(action: ExportAction) {
+  if (action.value === 'today') {
+    handleExportToday()
+  } else {
+    handleExportAll()
+  }
+}
+
+function handleExportToday() {
+  const today = getToday()
+  const record = getDayRecord(today)
+
+  if (!record || record.items.length === 0) {
+    showFailToast('今天还没有记录')
+    return
+  }
+
+  const markdown = dayRecordToMarkdown(record)
+  const filename = `每日复盘_${today}.md`
   downloadFile(markdown, filename)
   showSuccessToast('导出成功')
+}
+
+function handleExportAll() {
+  const data = loadData()
+  const dates = Object.keys(data.days)
+
+  if (dates.length === 0) {
+    showFailToast('还没有任何记录')
+    return
+  }
+
+  const markdown = exportToMarkdown(data)
+  const filename = `每日复盘_全部_${new Date().toISOString().slice(0, 10)}.md`
+  downloadFile(markdown, filename)
+  showSuccessToast(`已导出 ${dates.length} 天记录`)
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
