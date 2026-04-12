@@ -1,8 +1,10 @@
 <script setup lang="ts">
+import BottomNav from './components/layout/BottomNav.vue'
 </script>
 
 <template>
   <router-view />
+  <BottomNav />
 </template>
 
 <style>
