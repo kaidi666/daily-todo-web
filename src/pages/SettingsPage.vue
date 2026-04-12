@@ -67,9 +67,13 @@ function handleExport() {
   showSuccessToast('导出成功')
 }
 
-async function handleImport(file: { file: File }) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function handleImport(items: any) {
+  const item = Array.isArray(items) ? items[0] : items
+  if (!item?.file) return
+
   try {
-    const content = await readFile(file.file)
+    const content = await readFile(item.file as File)
     const records = parseMarkdownFile(content)
 
     if (records.length === 0) {

@@ -3,11 +3,8 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { DayRecord, RecordItem, HistoryCard } from '../types'
 import {
-  loadData,
-  saveData,
   getOrCreateDayRecord,
   updateDayRecord,
-  getAllDates,
   getDatesByMonth,
   clearAllData,
 } from '../utils/storage'

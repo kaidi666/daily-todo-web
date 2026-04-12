@@ -38,7 +38,7 @@ const store = useRecordStore()
 const date = computed(() => route.params.date as string)
 
 const navTitle = computed(() => {
-  const [year, month, day] = date.value.split('-')
+  const [_year, month, day] = date.value.split('-')
   return `${parseInt(month)}月${parseInt(day)}日`
 })
 
