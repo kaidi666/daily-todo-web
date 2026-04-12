@@ -1,5 +1,9 @@
+// src/main.ts
 import { createApp } from 'vue'
-import './style.css'
 import App from './App.vue'
+import 'vant/lib/index.css'
+import './assets/styles/variables.css'
+import './assets/styles/global.css'
 
-createApp(App).mount('#app')
+const app = createApp(App)
+app.mount('#app')
